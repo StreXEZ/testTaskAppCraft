@@ -17,7 +17,7 @@ class MainTabBarController: UITabBarController {
     func setupUI() {
         let albumsVC = AlbumsViewController()
         let navigationAlbumsVC = UINavigationController(rootViewController: albumsVC)
-        let albumsLocalVC = AlbumsViewController()
+        let albumsLocalVC = SavedAlbumsViewController()
         let navigationAlbumsLocalVC = UINavigationController(rootViewController: albumsLocalVC)
         let locationVC = LocationViewController()
 
