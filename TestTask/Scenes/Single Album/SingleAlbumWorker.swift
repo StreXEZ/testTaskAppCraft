@@ -8,6 +8,7 @@
 import Foundation
 import Alamofire
 
+
 class SingleAlbumWorker {
     let url = "https://jsonplaceholder.typicode.com/photos?albumId="
     

@@ -8,6 +8,7 @@ import Foundation
 
 protocol AlbumsBusinessLogic: class {
     func fetchAlbums()
+    var presenter: AlbumsPresentationLogic? { get set }
 }
 
 protocol AlbumsDataStore {
@@ -33,3 +34,17 @@ final class AlbumsInteractor: AlbumsBusinessLogic, AlbumsDataStore {
         })
     }
 }
+
+final class AlbumsLocalInteractor: AlbumsBusinessLogic, AlbumsDataStore {
+    var presenter: AlbumsPresentationLogic?
+    var albums: [Album]?
+    var worker: AlbumsLocalWorker?
+    
+    func fetchAlbums() {
+        worker = AlbumsLocalWorker()
+        albums = worker!.getListOfAlbums().albums
+        
+        presenter?.presentAlbums(AlbumsModel.AlbumsFetch.Response(albums: albums ?? []))
+    }
+}
+

@@ -18,13 +18,15 @@ class MainTabBarController: UITabBarController {
         let albumsVC = AlbumsViewController()
         let navigationAlbumsVC = UINavigationController(rootViewController: albumsVC)
         let albumsLocalVC = AlbumsViewController()
+        let navigationAlbumsLocalVC = UINavigationController(rootViewController: albumsLocalVC)
         let locationVC = LocationViewController()
 
         navigationAlbumsVC.tabBarItem = UITabBarItem(tabBarSystemItem: .bookmarks, tag: 0)
         albumsVC.title = "All albums"
         albumsLocalVC.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 1)
+        albumsLocalVC.title = "Favourites"
         locationVC.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 2)
-        let controllers = [navigationAlbumsVC, albumsLocalVC, locationVC]
+        let controllers = [navigationAlbumsVC, navigationAlbumsLocalVC, locationVC]
         self.viewControllers = controllers
     }
 }

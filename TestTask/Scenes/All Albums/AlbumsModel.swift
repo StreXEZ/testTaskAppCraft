@@ -25,4 +25,8 @@ struct Album: Decodable {
     let id: Int
     let userId: Int
     let title: String
+    
+    func copy(id: Int, userId: Int, title: String) -> Album {
+        return Album(id: id, userId: userId, title: title)
+    }
 }

@@ -19,7 +19,7 @@ class AlbumsViewController: UIViewController {
     
     var albums = [Album]()
     
-    var isLocalStorage: Bool? = false
+    var isLocalStorage = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,6 +70,10 @@ extension AlbumsViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")
         cell?.textLabel?.text = albums[indexPath.row].title
         return cell!
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
