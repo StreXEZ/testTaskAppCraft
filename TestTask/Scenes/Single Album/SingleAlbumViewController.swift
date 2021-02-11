@@ -117,6 +117,7 @@ extension SingleAlbumViewController: UICollectionViewDelegate, UICollectionViewD
         cell.contentView.addSubview(imageView)
         cell.contentView.layer.cornerRadius = 15
         cell.contentView.layer.masksToBounds = true
+        
         imageView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }
@@ -128,7 +129,7 @@ extension SingleAlbumViewController: UICollectionViewDelegate, UICollectionViewD
         let currPhoto = INSPhoto(imageURL: URL(string: shownImages[indexPath.row].url), thumbnailImageURL: URL(string: shownImages[indexPath.row].thumbnailUrl))
         currPhoto.attributedTitle = NSAttributedString(string: shownImages[indexPath.row].title)
         let galleryPreview = INSPhotosViewController(photos: [currPhoto], initialPhoto: currPhoto, referenceView: cell)
-        galleryPreview.referenceViewForPhotoWhenDismissingHandler = { [weak self] photo in
+        galleryPreview.referenceViewForPhotoWhenDismissingHandler = { photo in
             return collectionView.cellForItem(at: indexPath)
         }
         present(galleryPreview, animated: true, completion: nil)

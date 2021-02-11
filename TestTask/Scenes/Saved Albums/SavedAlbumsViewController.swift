@@ -16,6 +16,7 @@ class SavedAlbumsViewController: UIViewController {
     private let refreshControl = UIRefreshControl()
     
     var interactor: SavedAlbumsBusinessLogic?
+    var router: SavedAlbumsRoutingLogic?
     var tableView: UITableView?
     
     var albums = [AlbumItem]()
@@ -31,7 +32,12 @@ class SavedAlbumsViewController: UIViewController {
     private func setup() {
         let interactor = SavedAlbumsInteractor()
         let presenter = SavedAlbumsPresenter()
+        let router = SavedAlbumsRouter()
+        
         self.interactor = interactor
+        self.router = router
+        router.viewController = self
+        router.dataStore = interactor
         interactor.presenter = presenter
         presenter.viewController = self
     }
@@ -70,6 +76,7 @@ extension SavedAlbumsViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.router?.showAlbumPage(for: Int(albums[indexPath.row].id))
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
