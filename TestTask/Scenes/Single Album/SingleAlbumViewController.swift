@@ -9,22 +9,24 @@ import UIKit
 import SnapKit
 import Kingfisher
 
-protocol SingleAlbumDisplayLogic {
+protocol SingleAlbumDisplayLogic: class  {
     func showSingleAlbum(_ vm: SingleAlbumModel.FetchAlbum.ViewModel)
+    func showDBInteractionButton(isSaved: Bool)
 }
 
 final class SingleAlbumViewController: UIViewController {
     var collectionView: UICollectionView?
     var interactor: SingleAlbumBusinessLogic?
-    var router: (NSObject & SingleAlbumPageDataPassing)?
+    var router: (NSObjectProtocol & SingleAlbumPageDataPassing)?
     
-    private let itemsPerRow: CGFloat = 2
-    private let sectionInsets = UIEdgeInsets(top: 50.0, left: 20.0, bottom: 50.0, right: 20.0)
+    private var itemsPerRow: CGFloat = 2
+    private let sectionInsets = UIEdgeInsets(top: 20.0, left: 10.0, bottom: 20.0, right: 10.0)
+    private var saveButton: UIBarButtonItem?
     
     var shownImages = [SingleAlbumImage]()
     
-    init() {
-        super.init(nibName: nil, bundle: nil)
+    override init(nibName: String?, bundle: Bundle?) {
+        super.init(nibName: nibName, bundle: bundle)
         setup()
     }
     
@@ -42,16 +44,24 @@ final class SingleAlbumViewController: UIViewController {
     }
     
     private func setup() {
+        let viewController = self
         let interactor = SingleAlbumInteractor()
         let presenter = SingleAlbumPresentor()
         let router = SingleAlbumRouter()
-        
-        self.router = router
-        router.viewController = self
-        self.interactor = interactor
+
+        viewController.router = router
+        viewController.interactor = interactor
+        router.viewController = viewController
+        presenter.viewController = viewController
         interactor.presenter = presenter
-        presenter.viewController = self
         router.dataStore = interactor
+    }
+    
+    deinit {
+        print("DEINITED")
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+//        self.collectionView = nil
     }
 }
 
@@ -64,12 +74,17 @@ extension SingleAlbumViewController {
             make.edges.equalToSuperview()
         })
         
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: #selector(saveToLocalDB))
+        self.navigationItem.rightBarButtonItem = saveButton
     }
     
     @objc
     func saveToLocalDB() {
         self.interactor?.saveToLocalDB()
+    }
+    
+    @objc
+    func deleteFromLocalDB() {
+        self.interactor?.deleteFromLocalDB()
     }
 }
 
@@ -94,6 +109,8 @@ extension SingleAlbumViewController: UICollectionViewDelegate, UICollectionViewD
         imageView.kf.setImage(with: URL(string: shownImages[indexPath.row].thumbnailUrl))
         imageView.contentMode = .scaleToFill
         cell.contentView.addSubview(imageView)
+        cell.contentView.layer.cornerRadius = 15
+        cell.contentView.layer.masksToBounds = true
         imageView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }
@@ -101,7 +118,9 @@ extension SingleAlbumViewController: UICollectionViewDelegate, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(shownImages[indexPath.row].id)
+        self.itemsPerRow = 1
+        self.collectionView?.collectionViewLayout.invalidateLayout()
+        self.collectionView?.scrollToItem(at: indexPath, at: .top, animated: false)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -122,8 +141,19 @@ extension SingleAlbumViewController: UICollectionViewDelegate, UICollectionViewD
 }
 
 extension SingleAlbumViewController: SingleAlbumDisplayLogic {
+    
     func showSingleAlbum(_ vm: SingleAlbumModel.FetchAlbum.ViewModel) {
         self.shownImages = vm.images
         collectionView?.reloadData()
     }
-}
+    
+    func showDBInteractionButton(isSaved: Bool) {
+        if isSaved {
+            print("S")
+            self.saveButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteFromLocalDB))
+        } else {
+            print("N")
+            self.saveButton = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveToLocalDB))
+        }
+        self.navigationItem.rightBarButtonItem = saveButton
+    }}

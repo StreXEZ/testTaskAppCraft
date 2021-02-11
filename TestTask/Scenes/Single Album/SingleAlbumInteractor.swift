@@ -12,6 +12,7 @@ import CoreData
 protocol SingleAlbumBusinessLogic: class {
     func fetchSingleAlbum()
     func saveToLocalDB()
+    func deleteFromLocalDB()
 }
 
 protocol SingleAlbumDataStore {
@@ -26,10 +27,11 @@ final class SingleAlbumInteractor: SingleAlbumBusinessLogic, SingleAlbumDataStor
 
     func fetchSingleAlbum() {
         guard let id = album?.id else { return }
-        worker.fetchAlbumImages(for: id) { (result) in
+        worker.fetchAlbumImages(for: id) { [weak self] (result) in
             switch result {
             case .success(let response):
-                self.presenter?.presentSingleAlbum(response)
+                self?.presenter?.presentSingleAlbum(response)
+                self?.presenter?.presentDBInteraction(isSaved: self!.localWorker.isAlbumIsSaved(self!.album!))
             case .failure(let err):
                 print(err)
             }
@@ -39,24 +41,42 @@ final class SingleAlbumInteractor: SingleAlbumBusinessLogic, SingleAlbumDataStor
     func saveToLocalDB() {
         guard let album = album else { return }
         localWorker.saveToLocalDB(album)
+        presenter?.presentDBInteraction(isSaved: true)
+    }
+    
+    func deleteFromLocalDB() {
+        guard let album = album else { return }
+        localWorker.deleteFromDB(album)
+        presenter?.presentDBInteraction(isSaved: false)
     }
 }
 
 class SingleAlbumLocalWorker {
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    func isAlbumIsSaved(_ album: Album) -> Bool {
+        do {
+        let request = AlbumItem.fetchRequest() as NSFetchRequest<AlbumItem>
+        let items = try context.fetch(request)
+        if (items.first {$0.id == Int64(album.id)} == nil) {
+            return false
+        } else {
+            print("ALREADY SAVED")
+            return true
+        }
+        } catch {
+            return false
+        }
+    }
+    
     func saveToLocalDB(_ album: Album) {
         do {
-            let request = AlbumItem.fetchRequest() as NSFetchRequest<AlbumItem>
-            let items = try context.fetch(request)
-            if (items.first {$0.id == Int64(album.id)} == nil) {
+            if !isAlbumIsSaved(album) {
                 let localAlbum = AlbumItem(context: self.context)
                 localAlbum.id = Int64(album.id)
                 localAlbum.title = album.title
                 localAlbum.userId = Int64(album.userId)
                 try self.context.save()
-                
-            } else {
-                print("Already in Storage")
             }
         } catch {
             fatalError("Fail CoreData")

@@ -13,12 +13,12 @@ protocol SavedAlbumsDisplayLogic {
 }
 
 class SavedAlbumsViewController: UIViewController {
+    private let refreshControl = UIRefreshControl()
+    
     var interactor: SavedAlbumsBusinessLogic?
     var tableView: UITableView?
     
     var albums = [AlbumItem]()
-    
-    var isLocalStorage = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,6 +44,7 @@ extension SavedAlbumsViewController {
         tableView!.snp.makeConstraints({ (make) in
             make.edges.equalToSuperview()
         })
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(startEditing))
     }
 }
 
@@ -53,6 +54,8 @@ extension SavedAlbumsViewController: UITableViewDelegate, UITableViewDataSource 
         tableView = UITableView(frame: .zero, style: .plain)
         tableView?.delegate = self
         tableView?.dataSource = self
+        tableView?.refreshControl = self.refreshControl
+        refreshControl.addTarget(self, action: #selector(refreshAlbums), for: .valueChanged)
         tableView?.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
     }
     
@@ -66,7 +69,7 @@ extension SavedAlbumsViewController: UITableViewDelegate, UITableViewDataSource 
         return cell!
     }
     
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -76,6 +79,17 @@ extension SavedAlbumsViewController: UITableViewDelegate, UITableViewDataSource 
             self.interactor?.deleteAlbum(album)
         }
         return UISwipeActionsConfiguration(actions: [action])
+    }
+    
+    @objc
+    func refreshAlbums() {
+        interactor?.fetchAlbums()
+        self.refreshControl.perform(#selector(UIRefreshControl.endRefreshing), with: nil, afterDelay: 0)
+    }
+    
+    @objc
+    func startEditing() {
+        tableView?.setEditing(!tableView!.isEditing, animated: true)
     }
 }
 

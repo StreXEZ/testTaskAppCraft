@@ -72,10 +72,18 @@ extension LocationViewController {
 extension LocationViewController: LocationDisplayLogic {
     func userLocationIsNotShowing() {
         textLabel.text = "Press to see ur locaiton"
+        button.backgroundColor = .cyan
+        let conf = UIImage.SymbolConfiguration(pointSize: 30)
+        button.setImage(UIImage(systemName: "play", withConfiguration: conf), for: .normal)
+        button.imageView?.tintColor = .white
     }
     
     func showUserLocaiton(_ vm: LocationModel.LocationFetch.ViewModel) {
         textLabel.text = vm.location
+        button.backgroundColor = .red
+        let conf = UIImage.SymbolConfiguration(pointSize: 30)
+        button.setImage(UIImage(systemName: "stop", withConfiguration: conf), for: .normal)
+        button.imageView?.tintColor = .white
     }
     
     @objc

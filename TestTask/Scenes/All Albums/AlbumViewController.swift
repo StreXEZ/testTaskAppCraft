@@ -62,6 +62,7 @@ extension AlbumsViewController: UITableViewDelegate, UITableViewDataSource {
         tableView?.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
     }
     
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return albums.count
     }
@@ -78,6 +79,8 @@ extension AlbumsViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         router?.showAlbumPage(for: albums[indexPath.row].id)
+        tableView.deselectRow(at: indexPath, animated: true)
+
     }
 }
 

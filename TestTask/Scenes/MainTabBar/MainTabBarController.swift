@@ -11,6 +11,7 @@ class MainTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        self.tabBar.isTranslucent = false
         self.selectedIndex = 0
     }
     
@@ -20,6 +21,9 @@ class MainTabBarController: UITabBarController {
         let albumsLocalVC = SavedAlbumsViewController()
         let navigationAlbumsLocalVC = UINavigationController(rootViewController: albumsLocalVC)
         let locationVC = LocationViewController()
+        
+        navigationAlbumsVC.navigationBar.isTranslucent = false
+        navigationAlbumsLocalVC.navigationBar.isTranslucent = false
 
         navigationAlbumsVC.tabBarItem = UITabBarItem(tabBarSystemItem: .bookmarks, tag: 0)
         albumsVC.title = "All albums"
