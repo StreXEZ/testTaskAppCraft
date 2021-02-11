@@ -29,6 +29,8 @@ final class LocationIterator: NSObject, LocationBusinessLogic {
     override init() {
         super.init()
         self.setupSound()
+        locManager.delegate = self
+        locManager.allowsBackgroundLocationUpdates = true
     }
     
     func toggleLocationService() {
@@ -44,8 +46,6 @@ final class LocationIterator: NSObject, LocationBusinessLogic {
     }
     
     func startFetchingLocation() {
-        locManager.delegate = self
-        locManager.allowsBackgroundLocationUpdates = true
         locManager.requestAlwaysAuthorization()
         if CLLocationManager.locationServicesEnabled() {
             locManager.startUpdatingLocation()
@@ -66,7 +66,6 @@ extension LocationIterator: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("PIZDEC")
         print(error)
     }
 }
@@ -74,7 +73,7 @@ extension LocationIterator: CLLocationManagerDelegate {
 // MARK: - Sound
 extension LocationIterator {
     func setupSound() {
-        guard let url = Bundle.main.path(forResource: "sound", ofType: "mp3") else { print("PIZDA"); return }
+        guard let url = Bundle.main.path(forResource: "sound", ofType: "mp3") else { return }
         
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
@@ -83,8 +82,7 @@ extension LocationIterator {
             player = try AVAudioPlayer(contentsOf: URL(fileURLWithPath:  url))
             player?.numberOfLoops = -1
         } catch let error {
-            print(error)
-            print("SOME ERROR")
+            
         }
     }
 }

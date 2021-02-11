@@ -13,9 +13,11 @@ protocol AlbumsDisplayLogic {
 }
 
 class AlbumsViewController: UIViewController {
+    private let refreshControl = UIRefreshControl()
+    private var tableView: UITableView?
+    
     var interactor: AlbumsBusinessLogic?
     var router: AlbumsRoutingLogic?
-    var tableView: UITableView?
     
     var albums = [Album]()
     
@@ -59,6 +61,10 @@ extension AlbumsViewController: UITableViewDelegate, UITableViewDataSource {
         tableView = UITableView(frame: .zero, style: .plain)
         tableView?.delegate = self
         tableView?.dataSource = self
+        tableView?.estimatedRowHeight = 44
+        tableView?.rowHeight = UITableView.automaticDimension
+        tableView?.refreshControl = self.refreshControl
+        refreshControl.addTarget(self, action: #selector(refreshAlbums), for: .valueChanged)
         tableView?.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
     }
     
@@ -70,6 +76,7 @@ extension AlbumsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")
         cell?.textLabel?.text = albums[indexPath.row].title
+        cell?.textLabel?.numberOfLines = 0
         return cell!
     }
     
@@ -77,10 +84,19 @@ extension AlbumsViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         router?.showAlbumPage(for: albums[indexPath.row].id)
         tableView.deselectRow(at: indexPath, animated: true)
-
+    }
+    
+    @objc
+    func refreshAlbums() {
+        interactor?.fetchAlbums()
+        self.refreshControl.perform(#selector(UIRefreshControl.endRefreshing), with: nil, afterDelay: 0)
     }
 }
 

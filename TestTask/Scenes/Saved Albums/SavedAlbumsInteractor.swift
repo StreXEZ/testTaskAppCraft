@@ -28,14 +28,14 @@ final class SavedAlbumsInteractor: SavedAlbumsBusinessLogic, SavedAlbumsDataStor
     }
     
     func fetchAlbums() {
-        let response = worker!.getListOfAlbums()
+        guard let response = worker?.getListOfAlbums() else { return }
         albums = response.albums
         
         presenter?.presentAlbums(response)
     }
     
     func deleteAlbum(_ album: AlbumItem) {
-        worker!.deleteAlbum(album)
+        worker?.deleteAlbum(album)
         fetchAlbums()
     }
     

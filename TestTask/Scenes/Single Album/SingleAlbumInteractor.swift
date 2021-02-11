@@ -10,8 +10,8 @@ import UIKit
 import CoreData
 
 protocol SingleAlbumBusinessLogic: class {
-    func fetchSingleAlbum()
-    func saveToLocalDB()
+    func fetchSingleAlbum(_ isLocal: Bool)
+    func saveToLocalDB(_ images: [SingleAlbumImage])
     func deleteFromLocalDB()
 }
 
@@ -25,22 +25,27 @@ final class SingleAlbumInteractor: SingleAlbumBusinessLogic, SingleAlbumDataStor
     var worker = SingleAlbumWorker()
     var localWorker = SingleAlbumLocalWorker()
 
-    func fetchSingleAlbum() {
+    func fetchSingleAlbum(_ isLocal: Bool) {
         guard let id = album?.id else { return }
-        worker.fetchAlbumImages(for: id) { [weak self] (result) in
-            switch result {
-            case .success(let response):
-                self?.presenter?.presentSingleAlbum(response)
-                self?.presenter?.presentDBInteraction(isSaved: self!.localWorker.isAlbumIsSaved(self!.album!))
-            case .failure(let err):
-                print(err)
+        if !isLocal {
+            worker.fetchAlbumImages(for: id) { [weak self] (result) in
+                switch result {
+                case .success(let response):
+                    self?.presenter?.presentSingleAlbum(response)
+                    self?.presenter?.presentDBInteraction(isSaved: self!.localWorker.isAlbumIsSaved(self!.album!))
+                case .failure(let err):
+                    print(err)
+                }
             }
+        } else {
+            self.presenter?.presentSingleAlbum(SingleAlbumModel.FetchAlbum.Response(images: localWorker.fetchFromLocalDB(id) ?? []))
+            self.presenter?.presentDBInteraction(isSaved: true)
         }
     }
     
-    func saveToLocalDB() {
+    func saveToLocalDB(_ images: [SingleAlbumImage]) {
         guard let album = album else { return }
-        localWorker.saveToLocalDB(album)
+        localWorker.saveToLocalDB(album, images: images)
         presenter?.presentDBInteraction(isSaved: true)
     }
     
@@ -48,49 +53,5 @@ final class SingleAlbumInteractor: SingleAlbumBusinessLogic, SingleAlbumDataStor
         guard let album = album else { return }
         localWorker.deleteFromDB(album)
         presenter?.presentDBInteraction(isSaved: false)
-    }
-}
-
-class SingleAlbumLocalWorker {
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
-    func isAlbumIsSaved(_ album: Album) -> Bool {
-        do {
-        let request = AlbumItem.fetchRequest() as NSFetchRequest<AlbumItem>
-        let items = try context.fetch(request)
-        if (items.first {$0.id == Int64(album.id)} == nil) {
-            return false
-        } else {
-            print("ALREADY SAVED")
-            return true
-        }
-        } catch {
-            return false
-        }
-    }
-    
-    func saveToLocalDB(_ album: Album) {
-        do {
-            if !isAlbumIsSaved(album) {
-                let localAlbum = AlbumItem(context: self.context)
-                localAlbum.id = Int64(album.id)
-                localAlbum.title = album.title
-                localAlbum.userId = Int64(album.userId)
-                try self.context.save()
-            }
-        } catch {
-            fatalError("Fail CoreData")
-        }
-    }
-    
-    func deleteFromDB(_ album: Album) {
-        do {
-            let request = AlbumItem.fetchRequest() as NSFetchRequest<AlbumItem>
-            let items = try context.fetch(request)
-            context.delete(items.first{ Int($0.id) == album.id}!)
-            try context.save()
-        } catch {
-            print("Failed to dele item")
-        }
     }
 }

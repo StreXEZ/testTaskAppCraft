@@ -13,13 +13,24 @@ protocol SavedAlbumsDisplayLogic {
 }
 
 class SavedAlbumsViewController: UIViewController {
+    // Private
     private let refreshControl = UIRefreshControl()
+    private var tableView: UITableView?
     
+    // Public
     var interactor: SavedAlbumsBusinessLogic?
     var router: SavedAlbumsRoutingLogic?
-    var tableView: UITableView?
     
     var albums = [AlbumItem]()
+    
+    lazy var placeholder: UILabel = {
+        let label = UILabel()
+        label.text = "You havent add any albums to your favourites"
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        return label
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,10 +57,17 @@ class SavedAlbumsViewController: UIViewController {
 // MARK: - UI
 extension SavedAlbumsViewController {
     private func setupUI() {
+        view.backgroundColor = .white
         view.addSubview(tableView!)
         tableView!.snp.makeConstraints({ (make) in
             make.edges.equalToSuperview()
         })
+        view.addSubview(placeholder)
+        placeholder.snp.makeConstraints { (make) in
+            make.center.equalToSuperview()
+            make.edges.equalToSuperview()
+        }
+        
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(startEditing))
     }
 }
@@ -60,6 +78,9 @@ extension SavedAlbumsViewController: UITableViewDelegate, UITableViewDataSource 
         tableView = UITableView(frame: .zero, style: .plain)
         tableView?.delegate = self
         tableView?.dataSource = self
+        tableView?.tableFooterView = UIView()
+        tableView?.estimatedRowHeight = 44
+        tableView?.rowHeight = UITableView.automaticDimension
         tableView?.refreshControl = self.refreshControl
         refreshControl.addTarget(self, action: #selector(refreshAlbums), for: .valueChanged)
         tableView?.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
@@ -72,7 +93,12 @@ extension SavedAlbumsViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")
         cell?.textLabel?.text = albums[indexPath.row].title
+        cell?.textLabel?.numberOfLines = 0
         return cell!
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -97,12 +123,16 @@ extension SavedAlbumsViewController: UITableViewDelegate, UITableViewDataSource 
     @objc
     func startEditing() {
         tableView?.setEditing(!tableView!.isEditing, animated: true)
+        if self.albums.count == 0 {
+            tableView?.endEditing(true)
+        }
     }
 }
 
 extension SavedAlbumsViewController: SavedAlbumsDisplayLogic {
     func presentAlbumList(_ albums: SavedAlbums.FetchAlbums.ViewModel) {
         self.albums = albums.albums
+        placeholder.isHidden = !(self.albums.count == 0)
         tableView?.reloadData()
     }
 }

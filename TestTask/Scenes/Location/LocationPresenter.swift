@@ -15,7 +15,7 @@ protocol LocationPresentationLogic {
 final class LocationPresenter: LocationPresentationLogic {
     var viewController: LocationDisplayLogic?
     func presentLocation(_ response: LocationModel.LocationFetch.Response) {
-        viewController?.showUserLocaiton(LocationModel.LocationFetch.ViewModel(location: "Latitude: \(String(format: "%.4f", response.lat)); Longitude: \(String(format: "%.4f", response.lon))"))
+        viewController?.showUserLocaiton(LocationModel.LocationFetch.ViewModel(location: "Lat: \(String(format: "%.4f", response.lat)) Lon: \(String(format: "%.4f", response.lon))"))
     }
     
     func locationIsNotParsing() {

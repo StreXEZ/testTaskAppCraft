@@ -21,7 +21,7 @@ class AlbumsRouter: NSObject, AlbumsRoutingLogic, AlbumsDataPassing {
     
     func showAlbumPage(for albumId: Int) {
         guard let album = (dataStore?.albums?.first {$0.id == albumId}) else { return }
-        let vc = SingleAlbumViewController()
+        let vc = SingleAlbumViewController(isSaved: false)
         vc.title = album.title
         var destinationDS = vc.router!.dataStore!
         passData(album: album, destination: &destinationDS)

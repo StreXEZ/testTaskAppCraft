@@ -25,6 +25,9 @@ class LocationViewController: UIViewController {
     
     var textLabel: UILabel = {
         let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 20)
+        label.numberOfLines = 0
+        label.adjustsFontSizeToFitWidth = true
         return label
     }()
     
@@ -32,6 +35,7 @@ class LocationViewController: UIViewController {
         super.viewDidLoad()
         setup()
         setupUI()
+        userLocationIsNotShowing()
     }
     
     private func setup() {
@@ -62,16 +66,15 @@ extension LocationViewController {
         button.addTarget(self, action: #selector(fetchLocation), for: .touchUpInside)
         
         textLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(button.snp.bottom).offset(10)
+            make.top.equalTo(button.snp.bottom).offset(30)
             make.centerX.equalToSuperview()
         }
-        userLocationIsNotShowing()
     }
 }
 
 extension LocationViewController: LocationDisplayLogic {
     func userLocationIsNotShowing() {
-        textLabel.text = "Press to see ur locaiton"
+        textLabel.text = "Press to see your locaiton"
         button.backgroundColor = .cyan
         let conf = UIImage.SymbolConfiguration(pointSize: 30)
         button.setImage(UIImage(systemName: "play.fill", withConfiguration: conf), for: .normal)

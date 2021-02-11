@@ -20,16 +20,18 @@ final class SingleAlbumViewController: UIViewController {
     private var itemsPerRow: CGFloat = 2
     private let sectionInsets = UIEdgeInsets(top: 20.0, left: 10.0, bottom: 20.0, right: 10.0)
     private var saveButton: UIBarButtonItem?
+    private var collectionView: UICollectionView?
+    private var isSaved: Bool?
     
     
     // Public
-    var collectionView: UICollectionView?
     var interactor: SingleAlbumBusinessLogic?
     var router: (NSObjectProtocol & SingleAlbumPageDataPassing & SingleAlbumRoutingLogic)?
     var shownImages = [SingleAlbumImage]()
     
-    override init(nibName: String?, bundle: Bundle?) {
-        super.init(nibName: nibName, bundle: bundle)
+    init(isSaved: Bool) {
+        super.init(nibName: nil, bundle: nil)
+        self.isSaved = isSaved
         setup()
     }
     
@@ -43,7 +45,7 @@ final class SingleAlbumViewController: UIViewController {
         setupCollectionView()
         setupUI()
         
-        self.interactor?.fetchSingleAlbum()
+        self.interactor?.fetchSingleAlbum(isSaved!)
     }
     
     private func setup() {
@@ -75,22 +77,6 @@ extension SingleAlbumViewController {
         })
         
         self.navigationItem.rightBarButtonItem = saveButton
-    }
-    
-    @objc
-    func saveToLocalDB() {
-        self.interactor?.saveToLocalDB()
-    }
-    
-    @objc
-    func deleteFromLocalDB() {
-        self.interactor?.deleteFromLocalDB()
-    }
-    
-    @objc
-    func backToGridView() {
-        self.itemsPerRow = 2
-        self.collectionView?.collectionViewLayout.invalidateLayout()
     }
 }
 
@@ -150,10 +136,20 @@ extension SingleAlbumViewController: UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return sectionInsets.left
     }
+    
+    @objc
+    func saveToLocalDB() {
+        self.interactor?.saveToLocalDB(self.shownImages)
+    }
+    
+    @objc
+    func deleteFromLocalDB() {
+        self.interactor?.deleteFromLocalDB()
+    }
 }
 
+// MARK: - DisplayLogic Inher.
 extension SingleAlbumViewController: SingleAlbumDisplayLogic {
-    
     func showSingleAlbum(_ vm: SingleAlbumModel.FetchAlbum.ViewModel) {
         self.shownImages = vm.images
         collectionView?.reloadData()
@@ -166,4 +162,5 @@ extension SingleAlbumViewController: SingleAlbumDisplayLogic {
             self.saveButton = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveToLocalDB))
         }
         self.navigationItem.rightBarButtonItem = saveButton
-    }}
+    }
+}
