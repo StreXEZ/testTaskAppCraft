@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import Kingfisher
+import INSPhotoGallery
 
 protocol SingleAlbumDisplayLogic: class  {
     func showSingleAlbum(_ vm: SingleAlbumModel.FetchAlbum.ViewModel)
@@ -15,14 +16,16 @@ protocol SingleAlbumDisplayLogic: class  {
 }
 
 final class SingleAlbumViewController: UIViewController {
-    var collectionView: UICollectionView?
-    var interactor: SingleAlbumBusinessLogic?
-    var router: (NSObjectProtocol & SingleAlbumPageDataPassing)?
-    
+    // Private
     private var itemsPerRow: CGFloat = 2
     private let sectionInsets = UIEdgeInsets(top: 20.0, left: 10.0, bottom: 20.0, right: 10.0)
     private var saveButton: UIBarButtonItem?
     
+    
+    // Public
+    var collectionView: UICollectionView?
+    var interactor: SingleAlbumBusinessLogic?
+    var router: (NSObjectProtocol & SingleAlbumPageDataPassing & SingleAlbumRoutingLogic)?
     var shownImages = [SingleAlbumImage]()
     
     override init(nibName: String?, bundle: Bundle?) {
@@ -60,9 +63,6 @@ final class SingleAlbumViewController: UIViewController {
     deinit {
         print("DEINITED")
     }
-    override func viewWillDisappear(_ animated: Bool) {
-//        self.collectionView = nil
-    }
 }
 
 // MARK: - UI
@@ -85,6 +85,12 @@ extension SingleAlbumViewController {
     @objc
     func deleteFromLocalDB() {
         self.interactor?.deleteFromLocalDB()
+    }
+    
+    @objc
+    func backToGridView() {
+        self.itemsPerRow = 2
+        self.collectionView?.collectionViewLayout.invalidateLayout()
     }
 }
 
@@ -118,9 +124,14 @@ extension SingleAlbumViewController: UICollectionViewDelegate, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.itemsPerRow = 1
-        self.collectionView?.collectionViewLayout.invalidateLayout()
-        self.collectionView?.scrollToItem(at: indexPath, at: .top, animated: false)
+        let cell = collectionView.cellForItem(at: indexPath)
+        let currPhoto = INSPhoto(imageURL: URL(string: shownImages[indexPath.row].url), thumbnailImageURL: URL(string: shownImages[indexPath.row].thumbnailUrl))
+        currPhoto.attributedTitle = NSAttributedString(string: shownImages[indexPath.row].title)
+        let galleryPreview = INSPhotosViewController(photos: [currPhoto], initialPhoto: currPhoto, referenceView: cell)
+        galleryPreview.referenceViewForPhotoWhenDismissingHandler = { [weak self] photo in
+            return collectionView.cellForItem(at: indexPath)
+        }
+        present(galleryPreview, animated: true, completion: nil)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -149,10 +160,8 @@ extension SingleAlbumViewController: SingleAlbumDisplayLogic {
     
     func showDBInteractionButton(isSaved: Bool) {
         if isSaved {
-            print("S")
             self.saveButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteFromLocalDB))
         } else {
-            print("N")
             self.saveButton = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveToLocalDB))
         }
         self.navigationItem.rightBarButtonItem = saveButton

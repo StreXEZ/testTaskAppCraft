@@ -25,11 +25,11 @@ class MainTabBarController: UITabBarController {
         navigationAlbumsVC.navigationBar.isTranslucent = false
         navigationAlbumsLocalVC.navigationBar.isTranslucent = false
 
-        navigationAlbumsVC.tabBarItem = UITabBarItem(tabBarSystemItem: .bookmarks, tag: 0)
+        navigationAlbumsVC.tabBarItem = UITabBarItem(title: "All albums", image: UIImage(systemName: "book"), selectedImage: UIImage(systemName: "book.fill"))
         albumsVC.title = "All albums"
-        albumsLocalVC.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 1)
+        albumsLocalVC.tabBarItem = UITabBarItem(title: "Favourites", image: UIImage(systemName: "star"), selectedImage: UIImage(systemName: "star.fill"))
         albumsLocalVC.title = "Favourites"
-        locationVC.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 2)
+        locationVC.tabBarItem = UITabBarItem(title: "Location", image: UIImage(systemName: "location"), selectedImage: UIImage(systemName: "location.fill"))
         let controllers = [navigationAlbumsVC, navigationAlbumsLocalVC, locationVC]
         self.viewControllers = controllers
     }

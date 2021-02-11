@@ -74,7 +74,7 @@ extension LocationViewController: LocationDisplayLogic {
         textLabel.text = "Press to see ur locaiton"
         button.backgroundColor = .cyan
         let conf = UIImage.SymbolConfiguration(pointSize: 30)
-        button.setImage(UIImage(systemName: "play", withConfiguration: conf), for: .normal)
+        button.setImage(UIImage(systemName: "play.fill", withConfiguration: conf), for: .normal)
         button.imageView?.tintColor = .white
     }
     
@@ -82,7 +82,7 @@ extension LocationViewController: LocationDisplayLogic {
         textLabel.text = vm.location
         button.backgroundColor = .red
         let conf = UIImage.SymbolConfiguration(pointSize: 30)
-        button.setImage(UIImage(systemName: "stop", withConfiguration: conf), for: .normal)
+        button.setImage(UIImage(systemName: "stop.fill", withConfiguration: conf), for: .normal)
         button.imageView?.tintColor = .white
     }
     

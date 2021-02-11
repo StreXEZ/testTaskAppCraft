@@ -9,4 +9,5 @@ target 'TestTask' do
     pod 'Kingfisher'
     pod 'SnapKit'
     pod 'Alamofire'
+    pod 'INSPhotoGallery'
 end

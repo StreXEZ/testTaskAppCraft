@@ -41,7 +41,6 @@
 		E7BF837F25D47F4A003BB21D /* SavedAlbumsRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7BF837E25D47F4A003BB21D /* SavedAlbumsRouter.swift */; };
 		E7BF838225D480D8003BB21D /* SavedAlbumsWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7BF838125D480D8003BB21D /* SavedAlbumsWorker.swift */; };
 		E7BF838625D48181003BB21D /* SavedAlbumsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7BF838525D48181003BB21D /* SavedAlbumsModel.swift */; };
-		E7C0810425D5447600506A9D /* RandomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C0810325D5447600506A9D /* RandomViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -83,7 +82,6 @@
 		E7BF837E25D47F4A003BB21D /* SavedAlbumsRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedAlbumsRouter.swift; sourceTree = "<group>"; };
 		E7BF838125D480D8003BB21D /* SavedAlbumsWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedAlbumsWorker.swift; sourceTree = "<group>"; };
 		E7BF838525D48181003BB21D /* SavedAlbumsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedAlbumsModel.swift; sourceTree = "<group>"; };
-		E7C0810325D5447600506A9D /* RandomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -170,7 +168,6 @@
 				E74BB01B25D2C71900B805B4 /* MainTabBar */,
 				E74BB01A25D2C6D000B805B4 /* Location */,
 				E74BB01925D2C6B500B805B4 /* All Albums */,
-				E7C0810325D5447600506A9D /* RandomViewController.swift */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -389,7 +386,6 @@
 				E704665C25D3213F00FAEBBD /* SingleAlbumInteractor.swift in Sources */,
 				E704664425D2E91D00FAEBBD /* LocationInteractor.swift in Sources */,
 				E7BF834125D3C261003BB21D /* APIResponseChecker.swift in Sources */,
-				E7C0810425D5447600506A9D /* RandomViewController.swift in Sources */,
 				E7BF834425D3C279003BB21D /* APIError.swift in Sources */,
 				E7BF838225D480D8003BB21D /* SavedAlbumsWorker.swift in Sources */,
 			);
