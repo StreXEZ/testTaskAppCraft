@@ -18,6 +18,7 @@ class SingleAlbumLocalWorker {
         do {
             item = try context.fetch(request).first { $0.id == albumId }
         } catch {
+            print("Could Not Fetch local data")
         }
         return item?.imagesArray.map { $0.toSingleAlbumImage() }
 
@@ -30,7 +31,6 @@ class SingleAlbumLocalWorker {
         if (items.first {$0.id == Int64(album.id)} == nil) {
             return false
         } else {
-            print("ALREADY SAVED")
             return true
         }
         } catch {
@@ -57,7 +57,7 @@ class SingleAlbumLocalWorker {
                 try self.context.save()
             }
         } catch {
-            fatalError("Fail CoreData")
+            print("Failed to fetch album from CoreData")
         }
     }
     

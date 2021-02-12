@@ -23,7 +23,7 @@ class AlbumsRouter: NSObject, AlbumsRoutingLogic, AlbumsDataPassing {
         guard let album = (dataStore?.albums?.first {$0.id == albumId}) else { return }
         let vc = SingleAlbumViewController(isSaved: false)
         vc.title = album.title
-        var destinationDS = vc.router!.dataStore!
+        guard var destinationDS = vc.router?.dataStore else { return }
         passData(album: album, destination: &destinationDS)
         viewController?.navigationController?.pushViewController(vc, animated: true)
     }

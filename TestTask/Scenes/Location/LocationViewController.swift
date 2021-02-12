@@ -50,6 +50,12 @@ class LocationViewController: UIViewController {
     deinit {
         print("Deinited")
     }
+    
+    @objc
+    func fetchLocation() {
+        let request = LocationModel.LocationFetch.Request()
+        iterator?.toggleLocationService(request)
+    }
 }
 
 // MARK: - UI
@@ -87,10 +93,5 @@ extension LocationViewController: LocationDisplayLogic {
         let conf = UIImage.SymbolConfiguration(pointSize: 30)
         button.setImage(UIImage(systemName: "stop.fill", withConfiguration: conf), for: .normal)
         button.imageView?.tintColor = .white
-    }
-    
-    @objc
-    func fetchLocation() {
-        iterator?.toggleLocationService()
     }
 }

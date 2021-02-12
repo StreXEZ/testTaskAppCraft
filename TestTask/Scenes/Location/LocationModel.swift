@@ -9,9 +9,7 @@ import Foundation
 
 enum LocationModel {
     enum LocationFetch {
-        struct Request {
-            
-        }
+        struct Request {}
         
         struct Response {
             let lat: Double

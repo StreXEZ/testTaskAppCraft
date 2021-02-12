@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 protocol SingleAlbumBusinessLogic: class {
-    func fetchSingleAlbum(_ isLocal: Bool)
+    func fetchSingleAlbum(_ request: SingleAlbumModel.FetchAlbum.Request)
     func saveToLocalDB(_ images: [SingleAlbumImage])
     func deleteFromLocalDB()
 }
@@ -25,14 +25,16 @@ final class SingleAlbumInteractor: SingleAlbumBusinessLogic, SingleAlbumDataStor
     var worker = SingleAlbumWorker()
     var localWorker = SingleAlbumLocalWorker()
 
-    func fetchSingleAlbum(_ isLocal: Bool) {
+    func fetchSingleAlbum(_ request: SingleAlbumModel.FetchAlbum.Request) {
         guard let id = album?.id else { return }
-        if !isLocal {
+        if !request.isLocal {
             worker.fetchAlbumImages(for: id) { [weak self] (result) in
+                guard let self = self else { return }
                 switch result {
                 case .success(let response):
-                    self?.presenter?.presentSingleAlbum(response)
-                    self?.presenter?.presentDBInteraction(isSaved: self!.localWorker.isAlbumIsSaved(self!.album!))
+                    self.presenter?.presentSingleAlbum(response)
+                    guard let album = self.album else { return }
+                    self.presenter?.presentDBInteraction(isSaved: self.localWorker.isAlbumIsSaved(album))
                 case .failure(let err):
                     print(err)
                 }

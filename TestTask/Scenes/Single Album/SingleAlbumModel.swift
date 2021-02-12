@@ -9,7 +9,9 @@ import Foundation
 
 enum SingleAlbumModel {
     enum FetchAlbum {
-        struct Request {}
+        struct Request {
+            let isLocal: Bool
+        }
         struct Response {
             let images: [SingleAlbumImage]
         }

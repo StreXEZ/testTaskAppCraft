@@ -7,7 +7,7 @@
 import Foundation
 
 protocol AlbumsBusinessLogic: class {
-    func fetchAlbums()
+    func fetchAlbums(_ request: AlbumsModel.AlbumsFetch.Request)
     var presenter: AlbumsPresentationLogic? { get set }
 }
 
@@ -17,13 +17,12 @@ protocol AlbumsDataStore {
 
 final class AlbumsInteractor: AlbumsBusinessLogic, AlbumsDataStore {
     var presenter: AlbumsPresentationLogic?
-    var worker: AlbumsDataSourceWorker?
+    var worker: AlbumsDataSourceWorker = AlbumsRemoteDataSource()
     var albums: [Album]?
     
     
-    func fetchAlbums() {
-        worker = AlbumsRemoteDataSource()
-        worker?.fetchAlbumsList(callback: { (result) in
+    func fetchAlbums(_ request: AlbumsModel.AlbumsFetch.Request) {
+        worker.fetchAlbumsList(callback: { (result) in
             switch result {
             case .success(let response):
                 self.albums = response.albums

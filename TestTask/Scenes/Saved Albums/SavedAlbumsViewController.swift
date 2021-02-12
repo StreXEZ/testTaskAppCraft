@@ -37,7 +37,7 @@ class SavedAlbumsViewController: UIViewController {
         setup()
         setupTableView()
         setupUI()
-        interactor?.fetchAlbums()
+        interactor?.fetchAlbums(SavedAlbums.FetchAlbums.Request())
     }
     
     private func setup() {
@@ -109,14 +109,14 @@ extension SavedAlbumsViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let action = UIContextualAction(style: .destructive, title: "Delete") { (action, view, completionHandler) in
             let album = self.albums[indexPath.row]
-            self.interactor?.deleteAlbum(album)
+            self.interactor?.deleteAlbum(SavedAlbums.DeleteAlbums.Request(album: album))
         }
         return UISwipeActionsConfiguration(actions: [action])
     }
     
     @objc
     func refreshAlbums() {
-        interactor?.fetchAlbums()
+        interactor?.fetchAlbums(SavedAlbums.FetchAlbums.Request())
         self.refreshControl.perform(#selector(UIRefreshControl.endRefreshing), with: nil, afterDelay: 0)
     }
     

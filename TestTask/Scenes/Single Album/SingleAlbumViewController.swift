@@ -31,8 +31,8 @@ final class SingleAlbumViewController: UIViewController {
     
     init(isSaved: Bool) {
         super.init(nibName: nil, bundle: nil)
-        self.isSaved = isSaved
         setup()
+        self.isSaved = isSaved
     }
     
     required init?(coder: NSCoder) {
@@ -44,8 +44,7 @@ final class SingleAlbumViewController: UIViewController {
         view.backgroundColor = .white
         setupCollectionView()
         setupUI()
-        
-        self.interactor?.fetchSingleAlbum(isSaved!)
+        self.interactor?.fetchSingleAlbum(SingleAlbumModel.FetchAlbum.Request(isLocal: isSaved!))
     }
     
     private func setup() {

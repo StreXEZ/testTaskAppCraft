@@ -11,9 +11,7 @@ import MapKit
 import AVFoundation
 
 protocol LocationBusinessLogic {
-    func toggleLocationService()
-    func startFetchingLocation()
-    func stopFetchingLocation()
+    func toggleLocationService(_ request: LocationModel.LocationFetch.Request)
 }
 
 final class LocationIterator: NSObject, LocationBusinessLogic {
@@ -33,7 +31,7 @@ final class LocationIterator: NSObject, LocationBusinessLogic {
         locManager.allowsBackgroundLocationUpdates = true
     }
     
-    func toggleLocationService() {
+    func toggleLocationService(_ request: LocationModel.LocationFetch.Request) {
         switch isParsingLocation {
         case false:
             startFetchingLocation()
@@ -82,7 +80,7 @@ extension LocationIterator {
             player = try AVAudioPlayer(contentsOf: URL(fileURLWithPath:  url))
             player?.numberOfLoops = -1
         } catch let error {
-            
+            print(error)
         }
     }
 }

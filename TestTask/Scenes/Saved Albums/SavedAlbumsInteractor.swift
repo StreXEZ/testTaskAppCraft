@@ -8,8 +8,8 @@
 import Foundation
 
 protocol SavedAlbumsBusinessLogic: class {
-    func fetchAlbums()
-    func deleteAlbum(_ album: AlbumItem)
+    func fetchAlbums(_ request: SavedAlbums.FetchAlbums.Request)
+    func deleteAlbum(_ album: SavedAlbums.DeleteAlbums.Request)
     var presenter: SavedAlbumsPresentationLogic? { get set }
 }
 
@@ -27,16 +27,16 @@ final class SavedAlbumsInteractor: SavedAlbumsBusinessLogic, SavedAlbumsDataStor
         self.worker = worker
     }
     
-    func fetchAlbums() {
+    func fetchAlbums(_ request: SavedAlbums.FetchAlbums.Request) {
         guard let response = worker?.getListOfAlbums() else { return }
         albums = response.albums
         
         presenter?.presentAlbums(response)
     }
     
-    func deleteAlbum(_ album: AlbumItem) {
-        worker?.deleteAlbum(album)
-        fetchAlbums()
+    func deleteAlbum(_ album: SavedAlbums.DeleteAlbums.Request) {
+        worker?.deleteAlbum(album.album)
+        fetchAlbums(SavedAlbums.FetchAlbums.Request())
     }
     
 }

@@ -23,12 +23,21 @@ class AlbumsViewController: UIViewController {
     
     var isLocalStorage = false
     
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        setup()
+        let request = AlbumsModel.AlbumsFetch.Request()
+        interactor?.fetchAlbums(request)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setup()
         setupTableView()
         setupUI()
-        interactor?.fetchAlbums()
     }
     
     private func setup() {
@@ -95,7 +104,8 @@ extension AlbumsViewController: UITableViewDelegate, UITableViewDataSource {
     
     @objc
     func refreshAlbums() {
-        interactor?.fetchAlbums()
+        let request = AlbumsModel.AlbumsFetch.Request()
+        interactor?.fetchAlbums(request)
         self.refreshControl.perform(#selector(UIRefreshControl.endRefreshing), with: nil, afterDelay: 0)
     }
 }
