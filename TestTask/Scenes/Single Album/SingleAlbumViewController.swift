@@ -143,7 +143,13 @@ extension SingleAlbumViewController: UICollectionViewDelegate, UICollectionViewD
     
     @objc
     func deleteFromLocalDB() {
-        self.interactor?.deleteFromLocalDB()
+        let alert = UIAlertController(title: "Удаление", message: "Уверены, что хотите удалить альбом?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Удалить", style: .destructive, handler: { [weak self] (action) in
+            guard let self = self else { return }
+            self.interactor?.deleteFromLocalDB()
+        }))
+        alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
+        present(alert, animated: true)
     }
 }
 

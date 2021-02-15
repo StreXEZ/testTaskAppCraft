@@ -83,10 +83,13 @@ extension AlbumsViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")
-        cell?.textLabel?.text = albums[indexPath.row].title
-        cell?.textLabel?.numberOfLines = 0
-        return cell!
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "Cell")
+        let album = albums[indexPath.row]
+        cell.textLabel?.text = album.title
+        cell.textLabel?.numberOfLines = 0
+        cell.detailTextLabel?.text = "user \(album.userId)"
+        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 12, weight: .light)
+        return cell
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {

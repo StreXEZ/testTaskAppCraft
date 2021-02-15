@@ -21,18 +21,6 @@ extension AlbumItem {
     @NSManaged public var userId: Int64
     @NSManaged public var relationship: NSSet?
     
-//    public var wrappedId: Int64 {
-//        id ?? Int64(0)
-//    }
-//
-//    public var wrappedId: Int64 {
-//        id ?? Int64(0)
-//    }
-//
-//    public var wrappedId: Int64 {
-//        id ?? Int64(0)
-//    }
-    
     public var imagesArray: [AlbumImage] {
         let set = relationship as? Set<AlbumImage> ?? []
         
