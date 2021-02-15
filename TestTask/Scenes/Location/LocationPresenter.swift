@@ -13,7 +13,7 @@ protocol LocationPresentationLogic {
 }
 
 final class LocationPresenter: LocationPresentationLogic {
-    var viewController: LocationDisplayLogic?
+    weak var viewController: LocationDisplayLogic?
     func presentLocation(_ response: LocationModel.LocationFetch.Response) {
         viewController?.showUserLocaiton(LocationModel.LocationFetch.ViewModel(location: "Lat: \(String(format: "%.4f", response.lat)) Lon: \(String(format: "%.4f", response.lon))"))
     }
